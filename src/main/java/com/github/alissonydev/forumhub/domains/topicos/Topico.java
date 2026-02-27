@@ -1,5 +1,6 @@
 package com.github.alissonydev.forumhub.domains.topicos;
 
+import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
 import com.github.alissonydev.forumhub.domains.respostas.Resposta;
 import com.github.alissonydev.forumhub.domains.topicos.enums.TopicoStatus;
 import jakarta.persistence.*;
@@ -7,10 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,11 +30,8 @@ public class Topico {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String mensagem;
 
-    @CreatedDate
-    LocalDateTime dataCriacao;
-
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant createdAt;
+    private Instant dataCriacao;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20 , nullable = false)
@@ -50,4 +46,17 @@ public class Topico {
 
     @OneToMany(mappedBy = "topico" , fetch = FetchType.LAZY , cascade = CascadeType.MERGE)
     private List<Resposta> resposta;
+
+    public Topico(DadosCadastroTopico dados) {
+        titulo = dados.titulo();
+        mensagem = dados.mensagem();
+        autor = dados.nomeAutor();
+        curso = dados.nomeCurso();
+    }
+
+    @PrePersist
+    public void onPrePersist() {
+        status = TopicoStatus.NAO_RESPONDIDO;
+        dataCriacao = Instant.now();
+    }
 }

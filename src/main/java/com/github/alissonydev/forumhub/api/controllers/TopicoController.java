@@ -1,8 +1,13 @@
 package com.github.alissonydev.forumhub.api.controllers;
 
 import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
+import com.github.alissonydev.forumhub.api.dtos.DadosDetalhamentoTopicoDTO;
+import com.github.alissonydev.forumhub.domains.topicos.ITopicoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 
@@ -10,14 +15,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("topicos")
 public class TopicoController {
 
+    private final ITopicoService topicoService;
+
+    public TopicoController(ITopicoService topicoService) {
+        this.topicoService = topicoService;
+    }
+
     @GetMapping
     public String ok() {
         return "OK";
     }
 
     @PostMapping
-    public ResponseEntity<DadosCadastroTopico> cadastrar(@RequestBody DadosCadastroTopico dados) {
-        return ResponseEntity.ok(dados);
+    public ResponseEntity<DadosDetalhamentoTopicoDTO> cadastrar(@RequestBody DadosCadastroTopico dados) {
+        final DadosDetalhamentoTopicoDTO topicoCadastrado = topicoService.salvarTopico(dados);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}").buildAndExpand(topicoCadastrado.id()).toUri();
+
+        return ResponseEntity.created(uri).body(topicoCadastrado);
     }
 
 }
