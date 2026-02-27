@@ -1,5 +1,6 @@
 package com.github.alissonydev.forumhub.api.controllers;
 
+import com.github.alissonydev.forumhub.api.dtos.DadosAtualizacaoTopico;
 import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
 import com.github.alissonydev.forumhub.api.dtos.DadosDetalhamentoTopicoDTO;
 import com.github.alissonydev.forumhub.api.dtos.DadosListagemTopico;
@@ -47,6 +48,14 @@ public class TopicoController {
                 .fromCurrentRequest().path("/{id}").buildAndExpand(topicoCadastrado.id()).toUri();
 
         return ResponseEntity.created(uri).body(topicoCadastrado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DadosDetalhamentoTopicoDTO> atualizar(
+            @PathVariable @NotNull @Positive Long id ,
+            @Valid @RequestBody DadosAtualizacaoTopico dados)
+    {
+        return ResponseEntity.ok(topicoService.atualizar(id , dados));
     }
 
 }

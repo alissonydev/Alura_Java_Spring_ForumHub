@@ -1,5 +1,6 @@
 package com.github.alissonydev.forumhub.domains.topicos;
 
+import com.github.alissonydev.forumhub.api.dtos.DadosAtualizacaoTopico;
 import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
 import com.github.alissonydev.forumhub.domains.respostas.Resposta;
 import com.github.alissonydev.forumhub.domains.topicos.enums.TopicoStatus;
@@ -22,6 +23,7 @@ import java.util.List;
 public class Topico {
 
     @Id
+    @Column(unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -52,6 +54,14 @@ public class Topico {
         mensagem = dados.mensagem();
         autor = dados.nomeAutor();
         curso = dados.nomeCurso();
+    }
+
+    public void atualizarInformacoes(DadosAtualizacaoTopico dados) {
+        if (dados.titulo() != null) titulo = dados.titulo();
+        if (dados.mensagem() != null) mensagem = dados.mensagem();
+        if (dados.status() != null) status = dados.status();
+        if (dados.nomeAutor() != null) autor = dados.nomeAutor();
+        if (dados.nomeCurso() != null) curso = dados.nomeCurso();
     }
 
     @PrePersist
