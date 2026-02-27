@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,28 +25,27 @@ public class Topico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100 , nullable = false)
+    @Column(length = 100 , nullable = false , unique = true)
     private String titulo;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false , unique = true)
     private String mensagem;
 
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    @Column(name = "data_criacao", nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant dataCriacao;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20 , nullable = false)
-
     private TopicoStatus status;
 
-    @Column(length = 100)
+    @Column(length = 100 , nullable = false)
     private String autor;
 
-    @Column(length = 100)
+    @Column(length = 100 , nullable = false)
     private String curso;
 
     @OneToMany(mappedBy = "topico" , fetch = FetchType.LAZY , cascade = CascadeType.MERGE)
-    private List<Resposta> resposta;
+    private List<Resposta> resposta = new ArrayList<>();
 
     public Topico(DadosCadastroTopico dados) {
         titulo = dados.titulo();

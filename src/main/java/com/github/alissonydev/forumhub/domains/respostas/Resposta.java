@@ -32,7 +32,7 @@ public class Resposta {
 
     private String solucao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topico_id")
     private Topico topico;
 }
