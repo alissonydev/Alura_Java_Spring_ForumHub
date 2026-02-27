@@ -2,8 +2,14 @@ package com.github.alissonydev.forumhub.api.controllers;
 
 import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
 import com.github.alissonydev.forumhub.api.dtos.DadosDetalhamentoTopicoDTO;
+import com.github.alissonydev.forumhub.api.dtos.DadosListagemTopico;
 import com.github.alissonydev.forumhub.domains.topicos.ITopicoService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,8 +29,14 @@ public class TopicoController {
     }
 
     @GetMapping
-    public String ok() {
-        return "OK";
+    public ResponseEntity<Page<DadosListagemTopico>> paginar(
+        @PageableDefault(size = 10 , page = 0 , sort = {"dataCriacao"}) Pageable paginacao) {
+        return ResponseEntity.ok(topicoService.paginar(paginacao));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosDetalhamentoTopicoDTO> detalhar(@PathVariable @NotNull @Positive Long id) {
+        return ResponseEntity.ok(topicoService.detalhar(id));
     }
 
     @PostMapping

@@ -2,9 +2,14 @@ package com.github.alissonydev.forumhub.domains.topicos;
 
 import com.github.alissonydev.forumhub.api.dtos.DadosCadastroTopico;
 import com.github.alissonydev.forumhub.api.dtos.DadosDetalhamentoTopicoDTO;
+import com.github.alissonydev.forumhub.api.dtos.DadosListagemTopico;
 import com.github.alissonydev.forumhub.domains.topicos.exceptions.MensagemException;
 import com.github.alissonydev.forumhub.domains.topicos.exceptions.TituloException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +20,19 @@ public class TopicoService implements ITopicoService{
 
     public TopicoService(ITopicoRepository topicoRepository) {
         this.topicoRepository = topicoRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<DadosListagemTopico> paginar(Pageable paginacao) {
+        return topicoRepository.findAll(paginacao).map(DadosListagemTopico::new);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DadosDetalhamentoTopicoDTO detalhar(@NotNull @Positive Long id) {
+        final Topico topico = topicoRepository.getReferenceById(id);
+        return new DadosDetalhamentoTopicoDTO(topico);
     }
 
     @Override

@@ -2,17 +2,28 @@ package com.github.alissonydev.forumhub.api.controllers.exceptions;
 
 import com.github.alissonydev.forumhub.domains.topicos.exceptions.MensagemException;
 import com.github.alissonydev.forumhub.domains.topicos.exceptions.TituloException;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
 public class TratadorDeErros {
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        String message =  "Não foi possível encontrar o tópico de id " + ex.getMessage().substring(78);
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), message);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(TituloException.class)
     public ResponseEntity handleTituloException(TituloException ex) {
